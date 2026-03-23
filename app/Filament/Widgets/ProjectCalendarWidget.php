@@ -2,21 +2,25 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Meeting;
 use App\Models\Project;
-use App\Models\Sprint;
 use App\Models\Task;
 use Carbon\Carbon;
-use Closure;
+use Filament\Actions\CreateAction;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Guava\Calendar\Actions\CreateAction;
-use Guava\Calendar\Widgets\CalendarWidget as BaseCalendarWidget;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Group;
+use Filament\Schemas\Schema;
+use Guava\Calendar\Attributes\CalendarSchema;
+use Guava\Calendar\Enums\CalendarViewType;
+use Guava\Calendar\Filament\CalendarWidget as BaseCalendarWidget;
+use Guava\Calendar\ValueObjects\EventDropInfo;
+use Guava\Calendar\ValueObjects\EventResizeInfo;
+use Guava\Calendar\ValueObjects\FetchInfo;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
 
@@ -28,11 +32,11 @@ class ProjectCalendarWidget extends BaseCalendarWidget
 
     protected bool $eventResizeEnabled = true;
 
-    protected string | Closure | HtmlString | null $heading = 'Project Calendar';
+    protected HtmlString|string|bool|null $heading = 'Project Calendar';
 
-    protected string $calendarView = 'resourceTimeGridDay';
+    protected CalendarViewType $calendarView = CalendarViewType::ResourceTimeGridDay;
 
-    public function getEvents(array $fetchInfo = []): Collection | array
+    public function getEvents(FetchInfo $info): Collection | array
     {
         return collect()
             ->push(...Task::query()->get())
@@ -99,9 +103,10 @@ class ProjectCalendarWidget extends BaseCalendarWidget
         return $this->getDateContextMenuActions();
     }
 
-    public function getSchema(?string $model = null): ?array
+    #[CalendarSchema(Task::class)]
+    public function taskSchema(Schema $schema): Schema
     {
-        return [
+        return $schema->components([
             TextInput::make('title')
                 ->required(),
             RichEditor::make('description'),
@@ -124,14 +129,12 @@ class ProjectCalendarWidget extends BaseCalendarWidget
                 ->searchable()
                 ->preload()
                 ->required(),
-        ];
+        ]);
     }
 
-    public function onEventDrop(array $info = []): bool
+    public function onEventDrop(EventDropInfo $info, Model $event): bool
     {
-        parent::onEventDrop($info);
-
-        if (in_array($this->getModel(), [Task::class])) {
+        if ($this->getModel() == Task::class) {
             $record = $this->getRecord();
 
             if ($delta = data_get($info, 'delta')) {
@@ -157,10 +160,8 @@ class ProjectCalendarWidget extends BaseCalendarWidget
         return false;
     }
 
-    public function onEventResize(array $info = []): bool
+    public function onEventResize(EventResizeInfo $info, Model $event): bool
     {
-        parent::onEventResize($info);
-
         if ($this->getModel() === Task::class) {
             $record = $this->getRecord();
             if ($delta = data_get($info, 'endDelta')) {
@@ -198,7 +199,7 @@ class ProjectCalendarWidget extends BaseCalendarWidget
         ];
     }
 
-    public function authorize($ability, $arguments = [])
+    public function authorize($ability, $arguments = []): bool
     {
         return true;
     }

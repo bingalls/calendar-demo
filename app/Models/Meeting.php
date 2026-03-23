@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Guava\Calendar\Contracts\Eventable;
-// use Guava\Calendar\ValueObjects\Event;
 use Guava\Calendar\ValueObjects\CalendarEvent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,7 +29,7 @@ class Meeting extends Model implements Eventable
         return $this->belongsToMany(User::class);
     }
 
-    public function toCalendarEvent(): array | CalendarEvent
+    public function toCalendarEvent(): CalendarEvent
     {
         return CalendarEvent::make($this)
             ->title($this->title)
@@ -40,14 +39,4 @@ class Meeting extends Model implements Eventable
             ->extendedProp('participants', $this->users()->count())
         ;
     }
-
-    // public function toCalendarEvent(): CalendarEvent|array
-    // {
-    //     return CalendarEvent::make($this)
-    //         ->title($this->title)
-    //         ->start($this->start_date)
-    //         ->end($this->end_date)
-    //         ->backgroundColor($this->color)
-    //         ->allDay($this->is_all_day);
-    // }
 }
