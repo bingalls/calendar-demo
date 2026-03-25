@@ -10,18 +10,18 @@
     "require": {
         "php": "^8.3",
         "filament/filament": "^v5.4",
-        "guava/calendar": "^3.0",
-        "laravel/framework": "^v12",
-        "laravel/tinker": "^v2.11"
+        "guava/calendar": "^3.1",
+        "laravel/framework": "^v13.2",
+        "laravel/tinker": "^v3.0"
     },
     "require-dev": {
-        "fakerphp/faker": "^v1.24.1",
-        "larastan/larastan": "^v3.9.3",
-        "laravel/pint": "^v1.29.0",
-        "laravel/sail": "^v1.54.0",
-        "mockery/mockery": "^1.6.12",
-        "nunomaduro/collision": "^v8.9.1",
-        "phpunit/phpunit": "^13.0.5"
+        "fakerphp/faker": "^v1.24",
+        "larastan/larastan": "^v3.4",
+        "laravel/pint": "^v1.29",
+        "laravel/sail": "^v1.54",
+        "mockery/mockery": "^1.6",
+        "nunomaduro/collision": "^v8.9",
+        "phpunit/phpunit": "^13.0"
     },
     "autoload": {
         "psr-4": {
