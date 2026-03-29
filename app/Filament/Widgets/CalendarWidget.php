@@ -157,7 +157,7 @@ class CalendarWidget extends BaseCalendarWidget
 
     public function onEventDrop(EventDropInfo $info, Model $event): bool
     {
-        if (in_array($this->getModel(), [Meeting::class, Sprint::class])) {
+        if (in_array($this->getModel(), [Meeting::class, Sprint::class], true)) {
             $record = $this->getRecord();
 
             if ($delta = data_get($info, 'delta')) {
@@ -212,10 +212,5 @@ class CalendarWidget extends BaseCalendarWidget
         ;
 
         return false;
-    }
-
-    public function authorize($ability, $arguments = []): bool
-    {
-        return true;
     }
 }

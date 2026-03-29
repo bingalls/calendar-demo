@@ -78,11 +78,11 @@ class ProjectCalendarWidget extends BaseCalendarWidget
                     $startsAt = Carbon::make(data_get($arguments, 'startStr', $date));
                     $endsAt = Carbon::make(data_get($arguments, 'endStr', $date));
 
-                    if ($endsAt->diffInMinutes($startsAt) == 0) {
+                    if ($endsAt->diffInMinutes($startsAt) < 0.01) {
                         $endsAt->addMinutes(30);
                     }
 
-                    if ($startsAt && $endsAt) {
+                    if ($startsAt) {    // $endsAt > 0 due to check above
                         $form->fill([
                             'project_id' => $projectId,
                             'starts_at' => Carbon::make($startsAt),
@@ -134,7 +134,7 @@ class ProjectCalendarWidget extends BaseCalendarWidget
 
     public function onEventDrop(EventDropInfo $info, Model $event): bool
     {
-        if ($this->getModel() == Task::class) {
+        if ($this->getModel() === Task::class) {
             $record = $this->getRecord();
 
             if ($delta = data_get($info, 'delta')) {
@@ -197,10 +197,5 @@ class ProjectCalendarWidget extends BaseCalendarWidget
             'slotMinTime' => '08:00:00',
             'slotMaxTime' => '16:00:00',
         ];
-    }
-
-    public function authorize($ability, $arguments = []): bool
-    {
-        return true;
     }
 }
