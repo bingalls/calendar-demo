@@ -7,6 +7,7 @@ use App\Models\Meeting;
 use App\Models\Sprint;
 use Carbon\Carbon;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
@@ -14,7 +15,6 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Guava\Calendar\Attributes\CalendarSchema;
@@ -24,7 +24,6 @@ use Guava\Calendar\ValueObjects\EventResizeInfo;
 use Guava\Calendar\ValueObjects\FetchInfo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-
 
 class CalendarWidget extends BaseCalendarWidget
 {
@@ -75,7 +74,7 @@ class CalendarWidget extends BaseCalendarWidget
         return [
             CreateAction::make('ctxCreateMeeting')
                 ->model(Meeting::class)
-                ->mountUsing(function (Form $form, array $arguments) {
+                ->mountUsing(function (Schema $form, array $arguments) {
                     $date = data_get($arguments, 'dateStr');
 
                     if ($date) {
@@ -93,7 +92,7 @@ class CalendarWidget extends BaseCalendarWidget
         return [
             CreateAction::make('ctxCreateSprint')
                 ->model(Sprint::class)
-                ->mountUsing(function (Form $form, array $arguments) {
+                ->mountUsing(function (Schema $form, array $arguments) {
                     $startsAt = data_get($arguments, 'startStr');
                     $endsAt = data_get($arguments, 'endStr');
 
@@ -155,9 +154,12 @@ class CalendarWidget extends BaseCalendarWidget
         ]);
     }
 
+    /** @noinspection PhpPossiblePolymorphicInvocationInspection */
     public function onEventDrop(EventDropInfo $info, Model $event): bool
     {
+        /** @var InteractsWithRecord $this */
         if (in_array($this->getModel(), [Meeting::class, Sprint::class], true)) {
+            /** @noinspection DuplicatedCode */
             $record = $this->getRecord();
 
             if ($delta = data_get($info, 'delta')) {
@@ -185,9 +187,11 @@ class CalendarWidget extends BaseCalendarWidget
 
     public function onEventResize(EventResizeInfo $info, Model $event): bool
     {
+        /** @var InteractsWithRecord $this */
         if ($this->getModel() === Sprint::class) {
             $record = $this->getRecord();
             if ($delta = data_get($info, 'endDelta')) {
+                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 $endsAt = $record->ends_at;
                 $endsAt->addSeconds(data_get($delta, 'seconds'));
                 $record->update([

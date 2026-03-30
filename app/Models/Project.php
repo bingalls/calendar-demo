@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use Guava\Calendar\ValueObjects\CalendarResource;
-// use Guava\Calendar\Resource\CalendarResource;
-
 use Guava\Calendar\Contracts\Resourceable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

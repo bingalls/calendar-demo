@@ -5,13 +5,13 @@ namespace App\Filament\Widgets;
 use App\Models\Project;
 use App\Models\Task;
 use Carbon\Carbon;
-use Filament\Actions\CreateAction;
+use Filament\Actions\Concerns\InteractsWithRecord;
+use Guava\Calendar\Filament\Actions\CreateAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Guava\Calendar\Attributes\CalendarSchema;
@@ -72,7 +72,7 @@ class ProjectCalendarWidget extends BaseCalendarWidget
         return [
             CreateAction::make('ctxCreateTask')
                 ->model(Task::class)
-                ->mountUsing(function (Form $form, array $arguments) {
+                ->mountUsing(function (Schema $form, array $arguments) {
                     $projectId = data_get($arguments, 'resource.id');
                     $date = data_get($arguments, 'dateStr');
                     $startsAt = Carbon::make(data_get($arguments, 'startStr', $date));
@@ -132,9 +132,12 @@ class ProjectCalendarWidget extends BaseCalendarWidget
         ]);
     }
 
+    /** @noinspection PhpPossiblePolymorphicInvocationInspection */
     public function onEventDrop(EventDropInfo $info, Model $event): bool
     {
+        /** @var InteractsWithRecord $this */
         if ($this->getModel() === Task::class) {
+            /** @noinspection DuplicatedCode */
             $record = $this->getRecord();
 
             if ($delta = data_get($info, 'delta')) {
@@ -162,9 +165,11 @@ class ProjectCalendarWidget extends BaseCalendarWidget
 
     public function onEventResize(EventResizeInfo $info, Model $event): bool
     {
+        /** @var InteractsWithRecord $this */
         if ($this->getModel() === Task::class) {
             $record = $this->getRecord();
             if ($delta = data_get($info, 'endDelta')) {
+                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 $endsAt = $record->ends_at;
                 $endsAt->addSeconds(data_get($delta, 'seconds'));
                 $record->update([
