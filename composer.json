@@ -21,7 +21,8 @@
         "laravel/sail": "^v1.54",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^v8.9",
-        "phpunit/phpunit": "^13.0"
+        "pestphp/pest-plugin-livewire": "^4.1",
+        "phpunit/phpunit": "^12.5"
     },
     "autoload": {
         "psr-4": {
