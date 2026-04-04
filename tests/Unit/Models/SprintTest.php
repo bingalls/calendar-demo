@@ -1,11 +1,11 @@
-<?php
+<?php /** @noinspection StaticClosureCanBeUsedInspection */
 
 use App\Enums\Priority;
 use App\Models\Sprint;
 use Carbon\Carbon;
 use Guava\Calendar\ValueObjects\CalendarEvent;
 
-it('can be created via factory', static function () {
+it('can be created via factory', function () {
     $sprint = Sprint::factory()->create();
 
     expect($sprint)->toBeInstanceOf(Sprint::class)
@@ -14,7 +14,7 @@ it('can be created via factory', static function () {
         ->and($sprint->ends_at)->toBeInstanceOf(Carbon::class);
 });
 
-it('has fillable attributes', static function () {
+it('has fillable attributes', function () {
     $sprint = Sprint::factory()->create([
         'title' => 'Sprint 1',
         'priority' => Priority::High,
@@ -24,34 +24,34 @@ it('has fillable attributes', static function () {
         ->and($sprint->priority)->toBe(Priority::High);
 });
 
-it('casts priority to Priority enum', static function () {
+it('casts priority to Priority enum', function () {
     $sprint = Sprint::factory()->create(['priority' => Priority::Urgent]);
 
     expect($sprint->priority)->toBeInstanceOf(Priority::class)
         ->and($sprint->priority)->toBe(Priority::Urgent);
 });
 
-it('casts starts_at and ends_at to datetime', static function () {
+it('casts starts_at and ends_at to datetime', function () {
     $sprint = Sprint::factory()->create();
 
     expect($sprint->starts_at)->toBeInstanceOf(Carbon::class)
         ->and($sprint->ends_at)->toBeInstanceOf(Carbon::class);
 });
 
-it('converts to a CalendarEvent', static function () {
+it('converts to a CalendarEvent', function () {
     $sprint = Sprint::factory()->create();
 
     expect($sprint->toCalendarEvent())->toBeInstanceOf(CalendarEvent::class);
 });
 
-it('calendar event has correct title', static function () {
+it('calendar event has correct title', function () {
     $sprint = Sprint::factory()->create(['title' => 'Q2 Sprint']);
     $event = $sprint->toCalendarEvent();
 
     expect($event->getTitle())->toBe('Q2 Sprint');
 });
 
-it('calendar event has correct start and end', static function () {
+it('calendar event has correct start and end', function () {
     $starts = Carbon::parse('2026-04-07');
     $ends = Carbon::parse('2026-04-14');
 
@@ -66,7 +66,7 @@ it('calendar event has correct start and end', static function () {
         ->and($event->getEnd()->toDateString())->toBe($ends->toDateString());
 });
 
-it('calendar event extended props include priority label', static function () {
+it('calendar event extended props include priority label', function () {
     $sprint = Sprint::factory()->create(['priority' => Priority::High]);
     $event = $sprint->toCalendarEvent();
 

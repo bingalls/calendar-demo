@@ -1,11 +1,11 @@
-<?php
+<?php /** @noinspection StaticClosureCanBeUsedInspection */
 
 use App\Models\Meeting;
 use App\Models\User;
 use Carbon\Carbon;
 use Guava\Calendar\ValueObjects\CalendarEvent;
 
-it('can be created via factory', static function () {
+it('can be created via factory', function () {
     $meeting = Meeting::factory()->create();
 
     expect($meeting)->toBeInstanceOf(Meeting::class)
@@ -14,7 +14,7 @@ it('can be created via factory', static function () {
         ->and($meeting->ends_at)->toBeInstanceOf(Carbon::class);
 });
 
-it('has fillable attributes', static function () {
+it('has fillable attributes', function () {
     $meeting = Meeting::factory()->create([
         'title' => 'Weekly Standup',
         'description' => 'Daily sync meeting',
@@ -24,14 +24,14 @@ it('has fillable attributes', static function () {
         ->and($meeting->description)->toBe('Daily sync meeting');
 });
 
-it('casts starts_at and ends_at to datetime', static function () {
+it('casts starts_at and ends_at to datetime', function () {
     $meeting = Meeting::factory()->create();
 
     expect($meeting->starts_at)->toBeInstanceOf(Carbon::class)
         ->and($meeting->ends_at)->toBeInstanceOf(Carbon::class);
 });
 
-it('converts to a CalendarEvent', static function () {
+it('converts to a CalendarEvent', function () {
     $meeting = Meeting::factory()->create([
         'title' => 'Board Meeting',
         'starts_at' => '2026-04-03 09:00:00',
@@ -43,14 +43,14 @@ it('converts to a CalendarEvent', static function () {
     expect($event)->toBeInstanceOf(CalendarEvent::class);
 });
 
-it('calendar event has correct title', static function () {
+it('calendar event has correct title', function () {
     $meeting = Meeting::factory()->create(['title' => 'Sprint Review']);
     $event = $meeting->toCalendarEvent();
 
     expect($event->getTitle())->toBe('Sprint Review');
 });
 
-it('calendar event has correct start and end times', static function () {
+it('calendar event has correct start and end times', function () {
     $starts = Carbon::parse('2026-04-05 10:00:00');
     $ends = Carbon::parse('2026-04-05 11:00:00');
 
@@ -65,7 +65,7 @@ it('calendar event has correct start and end times', static function () {
         ->and($event->getEnd()->toDateTimeString())->toBe($ends->toDateTimeString());
 });
 
-it('calendar event extended props include participant count', static function () {
+it('calendar event extended props include participant count', function () {
     $meeting = Meeting::factory()->create();
     $users = User::factory()->count(3)->create();
     $meeting->users()->attach($users->pluck('id'));
@@ -75,14 +75,14 @@ it('calendar event extended props include participant count', static function ()
     expect($event->getExtendedProps())->toHaveKey('participants', 3);
 });
 
-it('calendar event is not duration editable', static function () {
+it('calendar event is not duration editable', function () {
     $meeting = Meeting::factory()->create();
     $event = $meeting->toCalendarEvent();
 
     expect($event->getDurationEditable())->toBeFalse();
 });
 
-it('belongs to many users', static function () {
+it('belongs to many users', function () {
     $meeting = Meeting::factory()->create();
     $users = User::factory()->count(2)->create();
     $meeting->users()->attach($users->pluck('id'));
